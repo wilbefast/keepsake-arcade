@@ -98,25 +98,12 @@ function love.keypressed(key, uni)
 
   -- launch the current game
   elseif key=="return" then
-  	if game_switch == 0 then
+  	if current_game_i == desired_game_i then
 	  	love.graphics.setMode(0, 0, false)
 	  		os.execute(games[current_game_i].executable_file)
 	  	love.graphics.setMode(w, h, true)
   	end
-
-  -- switch left
-  elseif key=="left" then
-  	if game_switch == 0 then
-  		desired_game_i = before(current_game_i)
-  	end
-
-  -- switch right
-  elseif key=="right" then
-  	if game_switch == 0 then
-  		desired_game_i = after(current_game_i)
-  	end
-  end
-
+	end
 
   log:push("love.keypressed(" .. key .. ")")
 end
@@ -141,9 +128,19 @@ PARTICLE EFFECTS
 local MAX_DT = 1/60
 function love.update(dt)
 
-	-- switch game in 1 second
+  -- start switching left
+  if love.keyboard.isDown("left") then
+		desired_game_i = before(current_game_i)
+	end
+
+  -- start switching right
+  if love.keyboard.isDown("right") then
+		desired_game_i = after(current_game_i)
+  end
+
+	-- switch game in 1/3 second
 	if desired_game_i ~= current_game_i then
-		game_switch = game_switch + dt
+		game_switch = game_switch + dt*3
 		if game_switch > 1 then
 			current_game_i = desired_game_i
 			game_switch = 0
@@ -158,24 +155,42 @@ end
 RENDERING
 --]]---------------------------------------------------------------------------
 
+
+
 function love.draw()
 
-	local preview = games[current_game_i].preview_image
+	-- shortcut for drawing centered images
+	function centeredImage(image)
+		local result = 
+		{ 
+			img = image, 
+			w = image:getWidth(), 
+			h = image:getHeight(),
+			draw = 
+				function(self, scale)
+					love.graphics.draw(self.img, w/2, h/2, 0, (scale or 1), (scale or 1), self.ox, self.oy)
+				end
+		}
+		result.ox, result.oy = result.w/2, result.h/2
+		return result
+	end
+	local preview = centeredImage(games[current_game_i].preview_image)
 
-	
 	if game_switch == 0 then
 		-- switch not currently taking place
-		love.graphics.draw(preview, (w-preview:getWidth())/2, (h-preview:getHeight())/2)
+		preview:draw()
 	elseif game_switch < 0.5 then
 		-- switching out old game
-		love.graphics.setColor(255, 255, 255, 255*(1 - game_switch*2))
-			love.graphics.draw(preview, (w-preview:getWidth())/2, (h-preview:getHeight())/2)
+		local visibility = (1 - game_switch*2)
+		love.graphics.setColor(255, 255, 255, 255*visibility)
+			preview:draw(visibility)
 		love.graphics.setColor(255, 255, 255)
 	else
 		-- switching in new game
-		local preview = games[desired_game_i].preview_image
-		love.graphics.setColor(255, 255, 255, 255*(game_switch-0.5)*2)
-			love.graphics.draw(preview, (w-preview:getWidth())/2, (h-preview:getHeight())/2)
+		preview = centeredImage(games[desired_game_i].preview_image)
+		local visibility = (game_switch-0.5)*2
+		love.graphics.setColor(255, 255, 255, 255*visibility)
+			preview:draw(visibility)
 		love.graphics.setColor(255, 255, 255)
 	end
 
