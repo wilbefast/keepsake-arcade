@@ -62,6 +62,11 @@ function love.load(arg)
 	-- log love.load
 	log:push("love.load")
 
+	--[[for k,v in pairs(os) do
+		log:push(tostring(k))
+		log:push(tostring(v))
+	end--]]
+
 end
 
 
