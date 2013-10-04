@@ -61,12 +61,6 @@ function love.load(arg)
 
 	-- log love.load
 	log:push("love.load")
-
-	--[[for k,v in pairs(os) do
-		log:push(tostring(k))
-		log:push(tostring(v))
-	end--]]
-
 end
 
 
@@ -102,7 +96,8 @@ function love.keypressed(key, uni)
   	love.event.push("quit")
 
   -- launch the current game
-  elseif key=="return" then
+  elseif (key~="left") and (key~="right") then
+  --elseif key=="return" then
   	if current_game_i == desired_game_i then
 	  	love.graphics.setMode(0, 0, false)
 	  		os.execute(games[current_game_i].executable_file)
