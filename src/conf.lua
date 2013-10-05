@@ -1,5 +1,5 @@
 function love.conf(t)
-    t.title = "Keysake Arcade"        -- The title of the window the game is in (string)
+    t.title = "Keepsake Arcade"        -- The title of the window the game is in (string)
     t.author = "William \"Wilbefast\" Dyce"        
                                 -- The author of the game (string)
     t.identity = nil            -- The name of the save directory (string)
@@ -9,6 +9,8 @@ function love.conf(t)
     t.window.fullscreen = true -- Enable fullscreen (boolean)
     t.window.vsync = true       -- Enable vertical sync (boolean)
     t.window.fsaa = 0           -- The number of FSAA-buffers (number)
+    t.window.fullscreentype = "desktop"
+    t.window.borderless = true  
     t.modules.joystick = true   -- Enable the joystick module (boolean)
     t.modules.audio = true      -- Enable the audio module (boolean)
     t.modules.keyboard = true   -- Enable the keyboard module (boolean)
