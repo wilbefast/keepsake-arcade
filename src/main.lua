@@ -23,11 +23,23 @@ end
 LOAD RESOURCES
 --]]---------------------------------------------------------------------------
 
-local w, h = 0, 0
+local w, h = 1024, 1280
 
 local games = { }
 
+local current_music = nil
+function play_music(new_music)
+	if current_music then
+		current_music:stop()
+	end
+	new_music:play()
+	new_music:setLooping(true)
+	new_music:setVolume(1)
+	current_music = new_music
+end
+
 function love.load(arg)
+
 	-- set 'best' screen mode
  --  local modes = love.graphics.getModes()
  --  table.sort(modes, function(a, b) return (a.width*a.height > b.width*b.height) end)
@@ -39,7 +51,7 @@ function love.load(arg)
 	-- 	end
 	-- end
 
-	love.window.setMode(1024, 1280, { fullscreen = true, borderless = true })
+	love.window.setMode(w, h, { fullscreen = true, borderless = true })
 
   -- initialise random
   math.randomseed(os.time())
@@ -51,18 +63,24 @@ function love.load(arg)
   games[1] = 
   {
   	executable_file = "love eggz/src",
-  	preview_image = love.graphics.newImage("images/eggz.jpg")
+  	preview_image = love.graphics.newImage("images/eggz.jpg"),
+  	music = love.audio.newSource("music/eggz.ogg", "stream")
 	}
   games[2] = 
   {
   	executable_file = "love-hg zweinflugger/src",
-  	preview_image = love.graphics.newImage("images/zwein.png")
+  	preview_image = love.graphics.newImage("images/zwein.png"),
+  	music = love.audio.newSource("music/zwein.ogg", "stream")
 	}
   games[3] = 
   {
   	executable_file = "love-hg zeroday/src",
-  	preview_image = love.graphics.newImage("images/0day.png")
+  	preview_image = love.graphics.newImage("images/0day.png"),
+  	music = love.audio.newSource("music/zeroday.ogg", "stream")
 	}
+
+	-- play initial music
+	play_music(games[1].music)
 
 	-- log love.load
 	log:push("love.load")
@@ -106,7 +124,7 @@ function love.keypressed(key, uni)
   	if current_game_i == desired_game_i then
   		love.window.setMode(0, 0, { fullscreen = false, borderless = true })
 	  		os.execute(games[current_game_i].executable_file)
-	  	love.window.setMode(1024, 1280, { fullscreen = true, borderless = true })
+	  	love.window.setMode(w, h, { fullscreen = true, borderless = true })
   	end
 	end
 
@@ -146,9 +164,12 @@ function love.update(dt)
 	-- switch game in 1/3 second
 	if desired_game_i ~= current_game_i then
 		game_switch = game_switch + dt*3
+		current_music:setVolume(1 - game_switch)
+
 		if game_switch > 1 then
 			current_game_i = desired_game_i
 			game_switch = 0
+			play_music(games[desired_game_i].music)
 		end
 	end
 
@@ -164,40 +185,25 @@ RENDERING
 
 function love.draw()
 
-	-- shortcut for drawing centered images
-	function centeredImage(image)
-		local result = 
-		{ 
-			img = image, 
-			w = image:getWidth(), 
-			h = image:getHeight(),
-			draw = 
-				function(self, scale)
-					love.graphics.draw(self.img, 0, 0)
-					--love.graphics.draw(self.img, w/2, h/2, 0, (scale or 1), (scale or 1), self.ox, self.oy)
-				end
-		}
-		result.ox, result.oy = result.w/2, result.h/2
-		return result
-	end
-	local preview = centeredImage(games[current_game_i].preview_image)
+
+	local preview = games[current_game_i].preview_image
 
 	if game_switch == 0 then
 		-- switch not currently taking place
-		preview:draw()
-	elseif game_switch < 0.5 then
-		-- switching out old game
-		local visibility = (1 - game_switch*2)
-		love.graphics.setColor(255, 255, 255, 255*visibility)
-			preview:draw(visibility)
-		love.graphics.setColor(255, 255, 255)
+		love.graphics.draw(preview, 0, 0)
 	else
-		-- switching in new game
-		preview = centeredImage(games[desired_game_i].preview_image)
-		local visibility = (game_switch-0.5)*2
-		love.graphics.setColor(255, 255, 255, 255*visibility)
-			preview:draw(visibility)
-		love.graphics.setColor(255, 255, 255)
+
+			local next_preview = games[desired_game_i].preview_image
+
+			if desired_game_i == before(current_game_i) then
+				-- push current preview right
+				love.graphics.draw(preview, game_switch*w, 0)
+				love.graphics.draw(next_preview, -(1-game_switch)*w, 0)
+			else
+				-- push current preview left
+				love.graphics.draw(preview, -game_switch*w, 0)
+				love.graphics.draw(next_preview, (1-game_switch)*w, 0)
+			end
 	end
 
 
