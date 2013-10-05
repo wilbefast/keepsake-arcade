@@ -123,7 +123,9 @@ function love.keypressed(key, uni)
   --elseif key=="return" then
   	if current_game_i == desired_game_i then
   		love.window.setMode(0, 0, { fullscreen = false, borderless = true })
+  		current_music:stop()
 	  		os.execute(games[current_game_i].executable_file)
+  		current_music:play()
 	  	love.window.setMode(w, h, { fullscreen = true, borderless = true })
   	end
 	end
