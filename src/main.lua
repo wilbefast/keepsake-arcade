@@ -29,15 +29,17 @@ local games = { }
 
 function love.load(arg)
 	-- set 'best' screen mode
-  local modes = love.graphics.getModes()
-  table.sort(modes, function(a, b) return (a.width*a.height > b.width*b.height) end)
-  for i, m in ipairs(modes) do
-    if love.graphics.setMode(m.width, m.height, true) then
-    	w = m.width
-    	h = m.height
-    	break -- success !
-		end
-	end
+ --  local modes = love.graphics.getModes()
+ --  table.sort(modes, function(a, b) return (a.width*a.height > b.width*b.height) end)
+ --  for i, m in ipairs(modes) do
+ --    if love.graphics.setMode(m.width, m.height, true) then
+ --    	w = m.width
+ --    	h = m.height
+ --    	break -- success !
+	-- 	end
+	-- end
+
+	love.window.setMode(1024, 1280, { fullscreen = true, borderless = true })
 
   -- initialise random
   math.randomseed(os.time())
@@ -102,9 +104,9 @@ function love.keypressed(key, uni)
   elseif (key~="left") and (key~="right") then
   --elseif key=="return" then
   	if current_game_i == desired_game_i then
-	  	love.graphics.setMode(0, 0, false)
+  		love.window.setMode(0, 0, { fullscreen = false, borderless = true })
 	  		os.execute(games[current_game_i].executable_file)
-	  	love.graphics.setMode(w, h, true)
+	  	love.window.setMode(1024, 1280, { fullscreen = true, borderless = true })
   	end
 	end
 
@@ -171,7 +173,8 @@ function love.draw()
 			h = image:getHeight(),
 			draw = 
 				function(self, scale)
-					love.graphics.draw(self.img, w/2, h/2, 0, (scale or 1), (scale or 1), self.ox, self.oy)
+					love.graphics.draw(self.img, 0, 0)
+					--love.graphics.draw(self.img, w/2, h/2, 0, (scale or 1), (scale or 1), self.ox, self.oy)
 				end
 		}
 		result.ox, result.oy = result.w/2, result.h/2

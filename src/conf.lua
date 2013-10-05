@@ -3,7 +3,7 @@ function love.conf(t)
     t.author = "William \"Wilbefast\" Dyce"        
                                 -- The author of the game (string)
     t.identity = nil            -- The name of the save directory (string)
-    t.version = "0.8.0"         -- The LÖVE version this game was made for (number)
+    t.version = "0.9.0"         -- The LÖVE version this game was made for (number)
     t.console = false           -- Attach a console (boolean, Windows only)
     t.release = false           -- Enable release mode (boolean)
     t.screen.fullscreen = true -- Enable fullscreen (boolean)
