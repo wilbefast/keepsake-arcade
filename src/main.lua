@@ -48,15 +48,18 @@ function love.load(arg)
   -- load game files and flavour text
   games[1] = 
   {
-  	executable_file = "EGGZ.exe",
-  	flavour_text = "EGGZ is a game with eggz in it.",
-  	preview_image = love.graphics.newImage("images/eggz.png")
+  	executable_file = "love eggz/src",
+  	preview_image = love.graphics.newImage("images/eggz.jpg")
 	}
   games[2] = 
   {
-  	executable_file = "Zweinflugger!.exe",
-  	flavour_text = "pew pew pew pew pew pew pew pew ^_^",
+  	executable_file = "love-hg zweinflugger/src",
   	preview_image = love.graphics.newImage("images/zwein.png")
+	}
+  games[3] = 
+  {
+  	executable_file = "love-hg zeroday/src",
+  	preview_image = love.graphics.newImage("images/0day.png")
 	}
 
 	-- log love.load
@@ -196,6 +199,6 @@ function love.draw()
 
 
 	-- debug console
-	log:draw()
+	--log:draw()
 
 end
