@@ -78,6 +78,12 @@ function love.load(arg)
   	preview_image = love.graphics.newImage("images/0day.png"),
   	music = love.audio.newSource("music/zeroday.ogg", "stream")
 	}
+  games[4] = 
+  {
+  	executable_file = "love-hg gecaye/src",
+  	preview_image = love.graphics.newImage("images/gecshot.png"),
+  	music = love.audio.newSource("music/colorintro.ogg", "stream")
+	}
 
 	-- play initial music
 	play_music(games[1].music)
